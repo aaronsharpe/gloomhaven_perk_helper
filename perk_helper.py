@@ -1,3 +1,6 @@
+from itertools import combinations
+
+
 class ModCard:
     def __init__(self, multiplier=None, damage_mod=None, rolling=None,
                  gen_air=None, gen_dark=None, gen_earth=None,
@@ -37,21 +40,18 @@ class ModCard:
         self.apply_bless = 0 if apply_bless is None else apply_bless
         self.apply_curse = 0 if apply_curse is None else apply_curse
 
-        arugments = locals()
-        self.repr_str = '['
-        count = 0
-        for arg, val in zip(arugments, arugments.values()):
-            if val is not None and arg is not 'self':
-                if count != 0:
-                    self.repr_str += ', '
-                count += 1
-
-                self.repr_str += '(' + str(arg) + ', ' + str(val) + ')'
-
-        self.repr_str += ']'
-
     def __repr__(self):
-        return self.repr_str
+        repr_items = []
+        if self.multiplier != 1:
+            repr_items.append('(multiplier, ' + str(self.multiplier) + ')')
+
+        repr_items.append('(damage_mod, ' + str(self.damage_mod) + ')')
+
+        for key, val in self.__dict__.items():
+            if key != 'multiplier' and key != 'damage_mod' and bool(val):
+                repr_items.append('(' + key + ', ' + str(val) + ')')
+
+        return '['+', '.join(repr_items)+']'
 
     def __eq__(self, other):
         if not isinstance(other, ModCard):
@@ -78,9 +78,7 @@ class ModDeck:
         print(card_to_remove)
         for _ in range(quantiy):
             for card in self.deck:
-                print(card)
                 if card == card_to_remove:
-                    print('found card')
                     self.deck.remove(card_to_remove)
                     break
 
@@ -91,3 +89,12 @@ class ModDeck:
     def add_curse(self, quantity):
         for _ in range(quantity):
             self.deck.append(ModCard(multiplier=0))
+
+    def compute_rolls(self):
+        self.rolls = []
+        for card in self.deck:
+            net_card = card.copy()
+            deck = self.deck.copy()
+            is_rolling = card.rolling
+            while is_rolling == True:
+                pass
