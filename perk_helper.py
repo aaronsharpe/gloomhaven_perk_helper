@@ -1,8 +1,4 @@
 class ModCard:
-    '''
-    TODO: add repr that returns values different than defaults
-    '''
-
     def __init__(self, multiplier=None, damage_mod=None, rolling=None,
                  gen_air=None, gen_dark=None, gen_earth=None,
                  gen_fire=None, gen_ice=None, gen_light=None,
@@ -57,40 +53,36 @@ class ModCard:
     def __repr__(self):
         return self.repr_str
 
+    def __eq__(self, other):
+        if not isinstance(other, ModCard):
+            return NotImplemented
+        return self.__dict__ == other.__dict__
+
 
 class ModDeck:
     def __init__(self):
         self.deck = []
-        self.add_card(1, damage_mod=-2)
-        self.add_card(5, damage_mod=-1)
-        self.add_card(6, damage_mod=0)
-        self.add_card(5, damage_mod=1)
-        self.add_card(1, damage_mod=2)
-        self.add_card(1, multiplier=2)
-        self.add_card(1, multiplier=0)
+        self.add_card(1, ModCard(damage_mod=-2))
+        self.add_card(5, ModCard(damage_mod=-1))
+        self.add_card(6, ModCard(damage_mod=0))
+        self.add_card(5, ModCard(damage_mod=1))
+        self.add_card(1, ModCard(damage_mod=2))
+        self.add_card(1, ModCard(multiplier=2))
+        self.add_card(1, ModCard(multiplier=0))
 
-    def add_card(self, quantity, multiplier=None, damage_mod=None, rolling=None,
-                 gen_air=None, gen_dark=None, gen_earth=None,
-                 gen_fire=None, gen_ice=None, gen_light=None,
-                 poison=None, muddle=None, wound=None,
-                 invisible=None, immobilize=None, strengthen=None,
-                 regenerate=None, refresh=None, disarm=None,
-                 stun=None, add_target=None,
-                 heal=None, push=None, pull=None, pierce=None, shield=None,
-                 apply_bless=None, apply_curse=None):
+    def add_card(self, quantity, card):
         for _ in range(quantity):
-            self.deck.append(ModCard(multiplier=multiplier, damage_mod=damage_mod, rolling=rolling,
-                                     gen_air=gen_air, gen_dark=gen_dark, gen_earth=gen_earth,
-                                     gen_fire=gen_fire, gen_ice=gen_ice, gen_light=gen_light,
-                                     poison=poison, muddle=muddle, wound=wound,
-                                     invisible=invisible, immobilize=immobilize, strengthen=strengthen,
-                                     regenerate=regenerate, refresh=refresh, disarm=disarm,
-                                     stun=stun, add_target=add_target,
-                                     heal=heal, push=push, pull=pull, pierce=pierce, shield=shield,
-                                     apply_bless=apply_bless, apply_curse=apply_curse))
+            self.deck.append(card)
 
-    def remove_card(self, quantiy):
-        pass
+    def remove_card(self, quantiy, card_to_remove):
+        print(card_to_remove)
+        for _ in range(quantiy):
+            for card in self.deck:
+                print(card)
+                if card == card_to_remove:
+                    print('found card')
+                    self.deck.remove(card_to_remove)
+                    break
 
     def add_bless(self, quantity):
         for _ in range(quantity):
