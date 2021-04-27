@@ -1,4 +1,5 @@
 from itertools import combinations
+import numpy as np
 
 
 class ModCard:
@@ -91,10 +92,27 @@ class ModDeck:
             self.deck.append(ModCard(multiplier=0))
 
     def compute_rolls(self):
+        deck = self.deck.copy()
         self.rolls = []
-        for card in self.deck:
-            net_card = card.copy()
-            deck = self.deck.copy()
-            is_rolling = card.rolling
-            while is_rolling == True:
-                pass
+        roll_check = False
+        for card in deck:
+            self.rolls.append([card])
+            if card.rolling:
+                roll_check = True
+
+        while roll_check:
+            terminating_roll = False
+            for i, roll in enumerate(self.rolls):
+                if roll[-1].rolling:
+                    terminating_roll = True
+                    new_roll = []
+                    temp_deck = deck.copy()
+                    for card in roll:
+                        temp_deck.remove(card)
+                    for card in temp_deck:
+                        temp_roll = roll.copy()
+                        temp_roll.append(card)
+                        new_roll.append(temp_roll)
+                    self.rolls[i:i+1] = new_roll
+            if not terminating_roll:
+                roll_check = False
