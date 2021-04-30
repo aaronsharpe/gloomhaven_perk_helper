@@ -168,10 +168,17 @@ class ModDeck:
 
         stats = {}
         for key in stats_merged.keys():
-            stats[key] = np.mean(stats_merged[key])
+            mean = np.mean(stats_merged[key])
+            if mean != 0 and key != 'multiplier' and key != 'damage_mod':
+                stats[key] = mean
+                stats[key+'_std'] = np.std(stats_merged[key])
+            elif key == 'multiplier' or key == 'damage_mod':
+                stats[key] = np.mean(stats_merged[key])
+                stats[key+'_std'] = np.std(stats_merged[key])
 
         stats['crit'] = stats_merged['multiplier'].count(
             2)/len(stats_merged['multiplier'])
         stats['miss'] = stats_merged['multiplier'].count(
             0)/len(stats_merged['multiplier'])
+        stats['hit'] = 1 - stats['miss']
         return stats
