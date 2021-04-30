@@ -151,18 +151,22 @@ class ModDeck:
             if not terminating_roll:
                 roll_check = False
 
-        self.stats_merged = self.compute_stats()
+        self.stats = self.compute_stats(self.rolls)
 
-    def compute_stats(self, base=0):
-        self.rolls_merged = []
-        for roll in self.rolls:
+    def compute_stats(self, rolls):
+        rolls_merged = []
+        for roll in rolls:
             card_merged = ModCard()
             for card in roll:
                 card_merged = card_merged.merge(card)
-            self.rolls_merged.append(card_merged)
+            rolls_merged.append(card_merged)
 
         stats_merged = defaultdict(list)
-        for roll in self.rolls_merged:
+        for roll in rolls_merged:
             for key, val in roll.__dict__.items():
                 stats_merged[key].append(val)
-        return stats_merged
+
+        stats = {}
+        for key in stats_merged.keys():
+            stats[key] = np.mean(stats_merged[key])
+        return stats
