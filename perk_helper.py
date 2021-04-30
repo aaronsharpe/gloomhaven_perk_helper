@@ -1,4 +1,5 @@
 from itertools import combinations
+from collections import defaultdict
 import numpy as np
 
 
@@ -150,7 +151,7 @@ class ModDeck:
             if not terminating_roll:
                 roll_check = False
 
-        self.compute_stats()
+        self.stats_merged = self.compute_stats()
 
     def compute_stats(self, base=0):
         self.rolls_merged = []
@@ -159,3 +160,9 @@ class ModDeck:
             for card in roll:
                 card_merged = card_merged.merge(card)
             self.rolls_merged.append(card_merged)
+
+        stats_merged = defaultdict(list)
+        for roll in self.rolls_merged:
+            for key, val in roll.__dict__.items():
+                stats_merged[key].append(val)
+        return stats_merged
