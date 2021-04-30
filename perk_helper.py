@@ -32,7 +32,7 @@ class ModCard:
         self.refresh = False if refresh is None else refresh
         self.disarm = False if disarm is None else disarm
         self.stun = False if stun is None else stun
-        self.add_target = False if add_target is None else add_target
+        self.add_target = 0 if add_target is None else add_target
         self.heal = 0 if heal is None else heal
         self.push = 0 if push is None else push
         self.pull = 0 if pull is None else pull
@@ -58,6 +58,39 @@ class ModCard:
         if not isinstance(other, ModCard):
             return NotImplemented
         return self.__dict__ == other.__dict__
+
+    def merge(self, card):
+        card_merged = ModCard()
+        card_merged.damage_mod = self.damage_mod + card.damage_mod
+        card_merged.multiplier = self.multiplier * card.multiplier
+
+        card_merged.rolling = self.rolling and card.rolling
+        card_merged.gen_air = self.gen_air or card.gen_air
+        card_merged.gen_dark = self.gen_dark or card.gen_dark
+        card_merged.gen_earth = self.gen_earth or card.gen_earth
+        card_merged.gen_fire = self.gen_fire or card.gen_fire
+        card_merged.gen_ice = self.gen_ice or card.gen_ice
+        card_merged.gen_light = self.gen_light or card.gen_light
+        card_merged.poison = self.poison or card.poison
+        card_merged.muddle = self.muddle or card.muddle
+        card_merged.wound = self.wound or card.wound
+        card_merged.invisible = self.invisible or card.invisible
+        card_merged.immobilize = self.immobilize or card.immobilize
+        card_merged.strengthen = self.strengthen or card.strengthen
+        card_merged.regenerate = self.regenerate or card.regenerate
+        card_merged.refresh = self.refresh or card.refresh
+        card_merged.disarm = self.disarm or card.disarm
+        card_merged.stun = self.stun or card.stun
+        card_merged.add_target = self.add_target + card.add_target
+        card_merged.heal = self.heal + card.heal
+        card_merged.push = self.push + card.push
+        card_merged.pull = self.pull + card.pull
+        card_merged.pierce = self.pierce + card.pierce
+        card_merged.shield = self.shield + card.shield
+        card_merged.apply_bless = self.apply_bless + card.apply_bless
+        card_merged.apply_curse = self.apply_curse + card.apply_curse
+
+        return card_merged
 
 
 class ModDeck:
@@ -116,3 +149,13 @@ class ModDeck:
                     self.rolls[i:i+1] = new_roll
             if not terminating_roll:
                 roll_check = False
+
+        self.compute_stats()
+
+    def compute_stats(self, base=0):
+        self.rolls_merged = []
+        for roll in self.rolls:
+            card_merged = ModCard()
+            for card in roll:
+                card_merged = card_merged.merge(card)
+            self.rolls_merged.append(card_merged)
