@@ -169,4 +169,9 @@ class ModDeck:
         stats = {}
         for key in stats_merged.keys():
             stats[key] = np.mean(stats_merged[key])
+
+        stats['crit'] = stats_merged['multiplier'].count(
+            2)/len(stats_merged['multiplier'])
+        stats['miss'] = stats_merged['multiplier'].count(
+            0)/len(stats_merged['multiplier'])
         return stats
